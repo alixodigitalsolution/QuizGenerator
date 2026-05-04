@@ -55,11 +55,23 @@ def generate_quiz_from_text(text, num_questions=5, difficulty="Intermediate", qu
     if not model:
         return get_demo_quiz(num_questions, text)
     
-    prompt = f"Create a professional {quiz_type} quiz with EXACTLY {num_questions} questions. Difficulty: {difficulty}. Topic: {text}. Return JSON array."
+    prompt = (
+        f"Create a professional {quiz_type} quiz about: {text}. "
+        f"Generate EXACTLY {num_questions} questions. "
+        f"Difficulty Level: {difficulty}. "
+        "Return the response ONLY as a JSON array of objects. "
+        "Each object must have this EXACT schema: "
+        '{"question": "string", "options": ["string", "string", "string", "string"], "answer": integer_index_0_to_3, "explanation": "string"}'
+    )
     
     try:
         response = model.generate_content(prompt)
-        return json.loads(response.text)
+        raw_text = response.text
+        
+        # Clean markdown if present
+        clean_json = re.sub(r'^```json\s*|\s*```$', '', raw_text.strip(), flags=re.MULTILINE)
+        
+        return json.loads(clean_json)
     except Exception as e:
         print(f"Generation error: {e}")
         return get_demo_quiz(num_questions, text)
