@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Genius AI | Advanced Assessment Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary)"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
+                <span style="font-size: 1.5rem; font-weight: 800; letter-spacing: -1px; margin-left: 10px;">QuizGenius <span style="color: var(--primary)">AI</span></span>
+            </div>
+            <h1>The Intelligent Quiz Builder</h1>
+            <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto;">Upload documents, paste text, or simply provide a topic. Our AI handles the rest.</p>
+        </header>
+
+        <main>
+            <!-- Setup Flow -->
+            <div id="setup-container" class="glass-card">
+                
+                <!-- Step 1: Source -->
+                <div id="step-1" class="setup-step active">
+                    <h2 class="step-title">1. Choose your source</h2>
+                    <div class="source-grid">
+                        <div class="source-card active" onclick="switchSource('text')">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                            <span>Text / Notes</span>
+                        </div>
+                        <div class="source-card" onclick="switchSource('file')">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            <span>Upload PDF</span>
+                        </div>
+                        <div class="source-card" onclick="switchSource('topic')">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            <span>Topic Prompt</span>
+                        </div>
+                    </div>
+
+                    <div id="text-input-area" class="source-input active">
+                        <textarea id="quiz-text" placeholder="Paste your study material here..."></textarea>
+                    </div>
+
+                    <div id="file-input-area" class="source-input">
+                        <div class="upload-zone" id="drop-zone">
+                            <input type="file" id="file-input" hidden accept=".pdf,.txt">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary); margin-bottom: 1rem;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="12" y2="12" x2="15" y2="15"></line></svg>
+                            <p id="file-status">Drag & drop your PDF or click to browse</p>
+                        </div>
+                    </div>
+
+                    <div id="topic-input-area" class="source-input">
+                        <textarea id="quiz-topic" placeholder="e.g., 'The French Revolution for High School students'"></textarea>
+                    </div>
+                </div>
+
+                <!-- Step 2: Customization -->
+                <div id="step-2" class="setup-step">
+                    <h2 class="step-title">2. Customize your quiz</h2>
+                    <div class="control-group">
+                        <div class="input-wrapper">
+                            <label>Question Type</label>
+                            <select id="quiz-type">
+                                <option value="Multiple Choice">Multiple Choice</option>
+                                <option value="True/False">True / False</option>
+                            </select>
+                        </div>
+                        <div class="input-wrapper">
+                            <label>Difficulty</label>
+                            <select id="difficulty">
+                                <option value="Beginner">Beginner</option>
+                                <option value="Intermediate" selected>Intermediate</option>
+                                <option value="Advanced">Advanced</option>
+                            </select>
+                        </div>
+                        <div class="input-wrapper">
+                            <label>Count (Max 50)</label>
+                            <input type="number" id="num-questions" value="5" min="1" max="50">
+                        </div>
+                    </div>
+                    <p id="loading-hint" style="display: none; color: var(--warning); font-size: 0.85rem; text-align: center; margin-bottom: 1rem;">Large quizzes (30+ questions) may take up to 30 seconds to generate.</p>
+                </div>
+
+                <div class="step-navigation">
+                    <button class="nav-btn secondary" id="prev-btn" style="display: none;" onclick="prevStep()">Back</button>
+                    <button class="nav-btn primary" id="next-btn" onclick="nextStep()">Continue</button>
+                    <button class="nav-btn primary" id="final-generate-btn" style="display: none;" onclick="generateQuiz()">
+                        <span class="loader" id="loader"></span>
+                        <span id="btn-text">Generate Quiz</span>
+                    </button>
+                </div>
+                
+                <div id="error-message" style="display: none;"></div>
+            </div>
+
+            <!-- Quiz Interface -->
+            <div id="quiz-container" class="glass-card">
+                <div class="quiz-header">
+                    <span id="question-counter">Question 1/5</span>
+                    <div class="timer-badge">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        <span id="timer">00:30</span>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <div id="question-display"></div>
+                
+                <div id="results-display" style="display: none;">
+                    <div id="feedback-title"></div>
+                    <p id="score-text"></p>
+                    <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                        <button class="generate-btn secondary" onclick="location.reload()">Start New</button>
+                        <button class="generate-btn" onclick="shareResults()">Share Results</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer style="margin-top: 4rem; text-align: center; color: var(--text-muted); font-size: 0.9rem; padding-bottom: 2rem;">
+            <p>Powered by <a href="https://alixo.pro" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 700;">Alixo</a> Digital Solution</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
